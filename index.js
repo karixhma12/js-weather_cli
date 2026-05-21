@@ -1,15 +1,5 @@
 const fs = require("fs");
-
-/*fs.readFile("config.txt","utf-8",callback);
-function callback(err,data){
-    if(data){
-        console.log(data);
-    }
-    else{
-        console.log(err);
-    }
-}*/
-
+const fetch = require("node-fetch");
 
 function readFilePromisified(fileName){
     return new Promise((resolve,reject)=>{
@@ -25,8 +15,23 @@ function readFilePromisified(fileName){
 };
 
 readFilePromisified("config.txt")
-.then((data)=>{
-    console.log(data)
+.then((city)=>{
+    return fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`)
+})
+.then((response)=>{
+    return response.json()
+})
+.then((geoData)=>{
+    const city = geoData.results[0];
+    const lat = city.latitude;
+    const lon = city.longitude;
+    return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+})
+.then(response=>{
+    return response.json();
+})
+.then(weatherData=>{
+    console.log(weatherData.current_weather);
 })
 .catch((err)=>{
     console.log(err)
