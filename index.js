@@ -22,6 +22,9 @@ readFilePromisified("config.txt")
     return response.json()
 })
 .then((geoData)=>{
+    if(!geoData.results){
+        throw new Error("City not found!");
+    }
     const city = geoData.results[0];
     const lat = city.latitude;
     const lon = city.longitude;
@@ -34,5 +37,5 @@ readFilePromisified("config.txt")
     console.log(weatherData.current_weather);
 })
 .catch((err)=>{
-    console.log(err)
+    console.log("Something went wrong : ", err.message);
 })
