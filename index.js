@@ -29,7 +29,10 @@ async function getWeather(){
             const lon = City.longitude;
             const newResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
             const newResult = await newResponse.json();
-            console.log(newResult.current_weather);
+            const weather = newResult.current_weather;
+            const output = `City: ${city}\nTemperature: ${weather.temperature}°C\nWindspeed: ${weather.windspeed} km/h`;
+            await writeFilePromisified("output.txt",output);
+            console.log("Weather saved to output.txt!");
         }
     }
     catch(err){
@@ -38,3 +41,18 @@ async function getWeather(){
 }
 
 getWeather();
+
+
+function writeFilePromisified(fileName,data){
+    return new Promise((resolve,reject)=>{
+        fs.writeFile(fileName,data,(err)=>{
+            if(err){
+                reject(err);
+            }
+            else{
+                resolve("success!")
+            }
+        });
+
+    })
+}

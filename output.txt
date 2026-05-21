@@ -1,0 +1,3 @@
+City: London 
+Temperature: 19.2°C
+Windspeed: 19.1 km/h
