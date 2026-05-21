@@ -14,28 +14,27 @@ function readFilePromisified(fileName){
     })
 };
 
-readFilePromisified("config.txt")
-.then((city)=>{
-    return fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`)
-})
-.then((response)=>{
-    return response.json()
-})
-.then((geoData)=>{
-    if(!geoData.results){
-        throw new Error("City not found!");
+
+async function getWeather(){
+    try{
+        const city = await readFilePromisified("config.txt");
+        const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
+        const result = await response.json();
+        if(!result.results){
+            throw new Error("City not found!");
+        }
+        else{
+            const City = result.results[0];
+            const lat = City.latitude;
+            const lon = City.longitude;
+            const newResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            const newResult = await newResponse.json();
+            console.log(newResult.current_weather);
+        }
     }
-    const city = geoData.results[0];
-    const lat = city.latitude;
-    const lon = city.longitude;
-    return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
-})
-.then(response=>{
-    return response.json();
-})
-.then(weatherData=>{
-    console.log(weatherData.current_weather);
-})
-.catch((err)=>{
-    console.log("Something went wrong : ", err.message);
-})
+    catch(err){
+        console.log("Something went wrong : " + err);
+    }
+}
+
+getWeather();
