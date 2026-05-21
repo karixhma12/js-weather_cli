@@ -30,9 +30,12 @@ async function getWeather(){
             const newResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
             const newResult = await newResponse.json();
             const weather = newResult.current_weather;
-            const output = `City: ${city}\nTemperature: ${weather.temperature}°C\nWindspeed: ${weather.windspeed} km/h`;
+            const output = `📍 City: ${city}
+            🌡️  Temperature: ${weather.temperature}°C
+            💨 Windspeed: ${weather.windspeed} km/h
+            🕐 Time: ${weather.time}`;
             await writeFilePromisified("output.txt",output);
-            console.log("Weather saved to output.txt!");
+            console.log("✅ Weather saved to output.txt!");
         }
     }
     catch(err){
